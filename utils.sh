@@ -1,18 +1,11 @@
 #!/bin/bash
-
-
 run_command() {
-    "$@"
-
+    "$@" > /dev/null
     local RESULT=$?
 
     if [[ "$RESULT" -ne 0 ]]; then
-        echo
-        echo "========================================"
-        echo "ОШИБКА"
-        echo "Команда: $*"
-        echo "Код ошибки: $RESULT"
-        echo "========================================"
+        echo "[✗] Ошибка: $*"
+        echo "[✗] Код ошибки: $RESULT"
         return "$RESULT"
     fi
 }
