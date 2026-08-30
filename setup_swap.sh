@@ -9,8 +9,13 @@ setup_swap() {
 
             if [[ "$SWAP_SIZE" != "${NEED_SWAP_SIZE}G" ]]; then
 
-                run_command "Отключение Swap..." swapoff /swapfile || return 1
-                run_command "Удаление старого Swap..." rm /swapfile || return 1
+                if [[ -n "$SWAP_SIZE" ]]; then
+                    run_command "Отключение Swap..." swapoff /swapfile || return 1
+                fi
+                
+                if [[ -f /swapfile ]]; then
+                    run_command "Удаление старого Swap..." rm /swapfile || return 1
+                fi
                 run_command "Создание Swap..." fallocate -l "${NEED_SWAP_SIZE}G" /swapfile || return 1
                 run_command "Настройка прав Swap..." chmod 600 /swapfile || return 1
                 run_command "Создание файловой системы Swap..." mkswap /swapfile || return 1
