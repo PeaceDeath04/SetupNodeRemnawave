@@ -10,15 +10,7 @@ run_command() {
     spinner "$PID" "$MESSAGE"
 
     wait "$PID"
-    local RESULT=$?
-
-    if [[ "$RESULT" -ne 0 ]]; then
-        echo "[✗] Ошибка: $*"
-        echo "[✗] Код ошибки: $RESULT"
-        return "$RESULT"
-    fi
-
-    return 0
+    return $?
 }
 
 spinner() {
