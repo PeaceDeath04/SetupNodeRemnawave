@@ -9,3 +9,4 @@ run_command() {
         return "$RESULT"
     fi
 }
+run_command apt install pv -y
