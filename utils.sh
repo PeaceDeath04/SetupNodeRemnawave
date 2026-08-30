@@ -1,16 +1,42 @@
 #!/bin/bash
 
 run_command() {
-    "$@" > /dev/null
+    local MESSAGE="$1"
+    shift
 
+    "$@" > /dev/null 2>&1 &
+    local PID=$!
+
+    spinner "$PID" "$MESSAGE"
+
+    wait "$PID"
     local RESULT=$?
 
     if [[ "$RESULT" -ne 0 ]]; then
-        echo
         echo "[✗] Ошибка: $*"
         echo "[✗] Код ошибки: $RESULT"
         return "$RESULT"
     fi
+
+    return 0
+}
+
+spinner() {
+    local PID=$1
+    local MESSAGE="$2"
+
+    local FRAMES=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
+    local i=0
+
+    while kill -0 "$PID" 2>/dev/null; do
+        printf "\r%s %s" "${FRAMES[i]}" "$MESSAGE"
+
+        i=$(( (i + 1) % ${#FRAMES[@]} ))
+
+        sleep 0.1
+    done
+
+    printf "\r\033[K"
 }
 
 print_success() {

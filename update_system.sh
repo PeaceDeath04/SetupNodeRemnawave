@@ -3,28 +3,11 @@
 source ./utils.sh
 
 apt_update() {
-
-    echo "Обновление списка пакетов..."
-
-    run_command apt-get update || return 1
-
-    echo
-    echo "Обновление пакетов..."
-
-    apt-get \
-        -y \
-        -o Dpkg::Progress-Fancy="1" \
-        upgrade
-
-    local RESULT=$?
-
-    if [[ "$RESULT" -ne 0 ]]; then
-        echo
-        echo "[✗] Ошибка обновления пакетов"
-        echo "[✗] Код ошибки: $RESULT"
-        return "$RESULT"
+    if ! run_command "Обновление списка пакетов..." apt-get update; then
+        return 1
     fi
 
-    echo
-    echo "[✓] Пакеты успешно обновлены"
+    if ! run_command "Обновление пакетов..." apt-get -y upgrade; then
+        return 1
+    fi
 }
