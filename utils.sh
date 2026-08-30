@@ -4,13 +4,31 @@ run_command() {
     local MESSAGE="$1"
     shift
 
-    "$@" > /dev/null 2>&1 &
+    local TMP_FILE
+    TMP_FILE=$(mktemp)
+
+    "$@" >"$TMP_FILE" 2>&1 &
     local PID=$!
 
     spinner "$PID" "$MESSAGE"
 
     wait "$PID"
-    return $?
+    local STATUS=$?
+
+    if [[ $STATUS -ne 0 ]]; then
+        printf "\r\033[K"
+        print_error "$MESSAGE"
+
+        if [[ -s "$TMP_FILE" ]]; then
+            sed 's/^/    /' "$TMP_FILE"
+        fi
+
+        rm -f "$TMP_FILE"
+        return "$STATUS"
+    fi
+
+    rm -f "$TMP_FILE"
+    return 0
 }
 
 spinner() {
