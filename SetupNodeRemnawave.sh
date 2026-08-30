@@ -1,7 +1,10 @@
 #!/bin/bash
 source ./utils.sh
-source ./setup_swap.sh
 source ./check_system.sh
+source ./setup_swap.sh
+
+check_sys
+
 
 if setup_swap; then
     echo "Успешно установлен файл подкачки размером ${NEED_SWAP_SIZE}G"
@@ -16,3 +19,4 @@ if setup_swap; then
         echo "$i"
         sleep 1
     done
+fi
