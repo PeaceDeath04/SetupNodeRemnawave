@@ -3,7 +3,7 @@
 source ./utils.sh
 
 apt_update() {
-
+    run_command apt-get install pv -y
     echo "Обновление списка пакетов..."
 
     run_command apt-get update || return 1
