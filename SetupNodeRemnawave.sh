@@ -5,29 +5,41 @@ source ./check_system.sh
 source ./setup_swap.sh
 source ./update_system.sh
 
-check_sys
+
+print_step "Проверка системы"
+
+if check_sys; then
+    print_success "Система соответствует требованиям"
+else
+    print_error "Проверка системы не пройдена"
+    exit 1
+fi
+
+
+print_step "Обновление системы"
 
 if apt_update; then
-    echo "Система успешно обновлена"
+    print_success "Система успешно обновлена"
 else
-    echo "Ошибка при обновлении системы"
+    print_error "Не удалось обновить систему"
     exit 1
 fi
+
+
+print_step "Настройка файла подкачки"
 
 if setup_swap; then
-    echo "Успешно установлен файл подкачки размером ${NEED_SWAP_SIZE}G"
-
-    # Показываем результат
-    free -h
-    swapon --show
-
-    echo "Продолжение через:"
-
-    for i in 3 2 1; do
-        echo "$i"
-        sleep 1
-    done
+    print_success "Swap успешно настроен: ${NEED_SWAP_SIZE}G"
 else
-    echo "Ошибка при настройке Swap"
+    print_error "Не удалось настроить Swap"
     exit 1
 fi
+
+
+print_step "Проверка Swap"
+
+free -h
+swapon --show
+
+
+countdown
