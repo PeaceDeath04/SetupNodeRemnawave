@@ -38,7 +38,15 @@ spinner() {
     local FRAMES=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
     local i=0
 
-    while kill -0 "$PID" 2>/dev/null; do
+    while true; do
+        local STATUS
+
+        STATUS=$(ps -o stat= -p "$PID" 2>/dev/null)
+
+        if [[ -z "$STATUS" || "$STATUS" == Z* ]]; then
+            break
+        fi
+
         printf "\r%s %s" "${FRAMES[i]}" "$MESSAGE"
 
         i=$(( (i + 1) % ${#FRAMES[@]} ))
